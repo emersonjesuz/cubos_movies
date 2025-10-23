@@ -8,10 +8,10 @@ export class AuthUseCase {
   constructor(private readonly userRepository: UserRepository, private readonly passwordEncoder: PasswordEncoder) {}
 
   public async register(input: RegisterInput): Promise<void> {
-    const hasUser = await this.userRepository.findByEmail(input.getEmail());
+    const hasUser = await this.userRepository.findByEmail(input.email);
     if (hasUser) throw new UserAlreadyExistsException();
-    const passwordHash = await this.passwordEncoder.encode(input.getPassword());
-    const newUser = new UserEntity(input.getName(), input.getEmail(), passwordHash);
+    const passwordHash = await this.passwordEncoder.encode(input.password);
+    const newUser = new UserEntity(input.name, input.email, passwordHash);
     await this.userRepository.save(newUser);
   }
 }
