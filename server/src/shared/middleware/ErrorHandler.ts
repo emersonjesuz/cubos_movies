@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { BadRequestException } from "../https/exceptions/BadRequestException";
+import { NextFunction, Request, Response } from "express";
 import z from "zod";
-import { ZodHandlerException } from "../https/exceptions/ZodHandlerException";
+import { BadRequestException } from "../https/exceptions/BadRequestException";
 import { NotFoundException } from "../https/exceptions/NotFoundException";
 import { UnauthorizedException } from "../https/exceptions/UnauthorizedException";
+import { ZodHandlerException } from "../https/exceptions/ZodHandlerException";
 
 export class ErrorHandler {
   public process(err: any, req: Request, res: Response, next: NextFunction) {
@@ -22,6 +22,7 @@ export class ErrorHandler {
         message: err.message,
       });
     }
+
     if (err instanceof UnauthorizedException) {
       return res.status(err.status).json({
         status: err.status,
