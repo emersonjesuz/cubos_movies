@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/auth/register", (req, res) => authController.register(req, res));
+app.post("/auth/login", (req, res) => authController.login(req, res));
 
 app.use(handlerError.process);
 const PORT = process.env.PORT || 3000;

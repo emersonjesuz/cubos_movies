@@ -11,3 +11,8 @@ export const registerUserSchema = z.object({
     .string({ error: "MESSAGE: The field 'password' is obligatory.  CODE: PASSWORD_IS_OBLIGATORY" })
     .min(6, { error: "MESSAGE: The field 'password' must be at least 6 characters long.  CODE: PASSWORD_IS_INVALID" }),
 });
+
+export const loginSchema = z.object({
+  email: z.string({ error: "MESSAGE: The field 'email' is obligatory.  CODE: EMAIL_IS_OBLIGATORY" }),
+  password: z.string({ error: "MESSAGE: The field 'password' is obligatory.  CODE: PASSWORD_IS_OBLIGATORY" }),
+});
