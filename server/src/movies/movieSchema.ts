@@ -74,4 +74,11 @@ export const movieCreateSchema = z.object({
       error: "MESSAGE: The field 'genres' is obligatory. CODE: GENRES_IS_OBLIGATORY",
     }
   ),
+  ageRating: z
+    .string({ error: "MESSAGE: The field 'ageRating' is obligatory. CODE: AGE_RATING_IS_OBLIGATORY" })
+    .min(1, { message: "MESSAGE: The field 'ageRating' cannot be empty. CODE: AGE_RATING_IS_EMPTY" }),
+
+  director: z
+    .string({ error: "MESSAGE: The field 'director' is obligatory. CODE: DIRECTOR_IS_OBLIGATORY" })
+    .min(1, { message: "MESSAGE: The field 'director' cannot be empty. CODE: DIRECTOR_IS_EMPTY" }),
 });
