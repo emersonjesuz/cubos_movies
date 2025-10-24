@@ -37,7 +37,7 @@ export class MoviePrismaRepository implements MovieRepository {
     return MovieDbMapper.toMovieEntity(movieCreated);
   }
 
-  public async update(movie: MovieEntity, movieId: string): Promise<MovieEntity> {
+  public async update(movie: MovieEntity, id: string): Promise<MovieEntity> {
     const movieCreated = await this.prisma.movies.update({
       data: {
         approvalRating: movie.getApprovalRating(),
@@ -62,7 +62,7 @@ export class MoviePrismaRepository implements MovieRepository {
         director: movie.getDirector(),
       },
       where: {
-        id: movieId,
+        id,
       },
       include: {
         users: true,
@@ -82,5 +82,9 @@ export class MoviePrismaRepository implements MovieRepository {
     });
     if (!movie) return null;
     return MovieDbMapper.toMovieEntity(movie);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.movies.delete({ where: { id } });
   }
 }
