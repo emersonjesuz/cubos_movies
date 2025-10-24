@@ -1,4 +1,4 @@
-export interface MovieCreateInput {
+export interface MovieInput {
   title: string;
   originalTitle: string;
   synopsis: string;

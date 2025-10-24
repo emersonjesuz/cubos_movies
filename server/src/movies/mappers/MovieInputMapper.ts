@@ -1,8 +1,8 @@
-import { MovieCreateInput } from "../dtos/MovieCreateInput";
+import { MovieInput } from "../dtos/MovieCreateInput";
 import { MovieEntity } from "../MovieEntity";
 
-export class MovieCreateInputMapper {
-  public static toMovieEntity(input: MovieCreateInput): MovieEntity {
+export class MovieInputMapper {
+  public static toMovieEntity(input: MovieInput): MovieEntity {
     return new MovieEntity(
       input.title,
       input.originalTitle,
