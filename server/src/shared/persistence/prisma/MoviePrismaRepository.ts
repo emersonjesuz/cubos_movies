@@ -83,6 +83,19 @@ export class MoviePrismaRepository implements MovieRepository {
     if (!movie) return null;
     return MovieDbMapper.toMovieEntity(movie);
   }
+  async findByIdAndUser(id: string, userId: string): Promise<MovieEntity | null> {
+    const movie = await this.prisma.movies.findUnique({
+      where: {
+        id,
+        userId,
+      },
+      include: {
+        users: true,
+      },
+    });
+    if (!movie) return null;
+    return MovieDbMapper.toMovieEntity(movie);
+  }
 
   async delete(id: string): Promise<void> {
     await this.prisma.movies.delete({ where: { id } });

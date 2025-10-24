@@ -17,8 +17,8 @@ export class MovieUseCase {
     return MovieEntityMapper.toMovieOutput(movieCreated);
   }
 
-  public async update(input: MovieInput, id: string) {
-    const hasMovie = await this.movieRepository.findById(id);
+  public async update(input: MovieInput, id: string, userId: string) {
+    const hasMovie = await this.movieRepository.findByIdAndUser(id, userId);
     if (!hasMovie) throw new MovieNotFoundException();
     const movie = MovieInputMapper.toMovieEntity(input);
     const movieUpdated = await this.movieRepository.update(movie, id);
@@ -27,14 +27,14 @@ export class MovieUseCase {
     }
     return MovieEntityMapper.toMovieOutput(movieUpdated);
   }
-  public async find(id: string) {
-    const hasMovie = await this.movieRepository.findById(id);
+  public async find(id: string, userId: string) {
+    const hasMovie = await this.movieRepository.findByIdAndUser(id, userId);
     if (!hasMovie) throw new MovieNotFoundException();
     return MovieEntityMapper.toMovieOutput(hasMovie);
   }
 
-  public async delete(id: string) {
-    const hasMovie = await this.movieRepository.findById(id);
+  public async delete(id: string, userId: string) {
+    const hasMovie = await this.movieRepository.findByIdAndUser(id, userId);
     if (!hasMovie) throw new MovieNotFoundException();
     await this.movieRepository.delete(id);
   }
