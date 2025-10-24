@@ -35,6 +35,8 @@ model Movies {
   urlBackground  String   @map("url_background")
   urlTrailer     String   @map("url_trailer")
   approvalRating String   @map("approval_rating")
+  ageRating      String   @map("age_rating")
+  director       String
   CreatedAt      DateTime @default(now()) @map("created_at")
   genres         String[]
   userId         String
