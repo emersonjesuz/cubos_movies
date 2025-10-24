@@ -7,10 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  Movies    Movies[]
+}
+
+model Movies {
+  id             String   @id @default(uuid())
+  title          String
+  originalTitle  String   @map("original_title")
+  synopsis       String
+  description    String
+  popularity     String
+  release        DateTime
+  budget         Decimal
+  revenue        Decimal
+  votes          Int
+  duration       String
+  language       String
+  profit         Decimal
+  status         String
+  urlCover       String   @map("url_cover")
+  urlBackground  String   @map("url_background")
+  urlTrailer     String   @map("url_trailer")
+  approvalRating String   @map("approval_rating")
+  CreatedAt      DateTime @default(now()) @map("created_at")
+  genres         String[]
+  userId         String
+  users          Users    @relation(fields: [userId], references: [id])
 }
