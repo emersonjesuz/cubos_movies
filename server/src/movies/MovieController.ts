@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../shared/interfaces/AuthenticatedRequest";
 import { MoviePrismaRepository } from "../shared/persistence/prisma/MoviePrismaRepository";
-import { movieCreateSchema } from "./movieSchema";
+import { movieSchema } from "./movieSchema";
 import { MovieUseCase } from "./MovieUsecase";
 import { QueueRabbitMQService } from "../shared/services/queue/QueueService";
 export class MovieController {
@@ -12,8 +12,14 @@ export class MovieController {
 
   public async create(request: AuthenticatedRequest, response: Response) {
     const user = request.user!;
-    const body = movieCreateSchema.parse(request.body);
+    const body = movieSchema.parse(request.body);
     const result = await this.movieUseCse.create(body, user.getId());
     return response.status(201).json(result);
+  }
+  public async update(request: AuthenticatedRequest, response: Response) {
+    const { id } = request.params;
+    const body = movieSchema.parse(request.body);
+    const result = await this.movieUseCse.update(body, id);
+    return response.status(200).json(result);
   }
 }
