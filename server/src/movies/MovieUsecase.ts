@@ -17,15 +17,20 @@ export class MovieUseCase {
     return MovieEntityMapper.toMovieOutput(movieCreated);
   }
 
-  public async update(input: MovieInput, movieId: string) {
-    const hasMovie = await this.movieRepository.findById(movieId);
+  public async update(input: MovieInput, id: string) {
+    const hasMovie = await this.movieRepository.findById(id);
     if (!hasMovie) throw new MovieNotFoundException();
     const movie = MovieInputMapper.toMovieEntity(input);
-    const movieUpdated = await this.movieRepository.update(movie, movieId);
+    const movieUpdated = await this.movieRepository.update(movie, id);
     if (hasMovie.getRelease() < movie.getRelease()) {
       await this.sendToQueueIfReleasesFuture(movieUpdated);
     }
     return MovieEntityMapper.toMovieOutput(movieUpdated);
+  }
+  public async find(id: string) {
+    const hasMovie = await this.movieRepository.findById(id);
+    if (!hasMovie) throw new MovieNotFoundException();
+    return MovieEntityMapper.toMovieOutput(hasMovie);
   }
 
   private async sendToQueueIfReleasesFuture(movie: MovieEntity) {

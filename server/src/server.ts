@@ -18,6 +18,7 @@ app.post("/auth/login", (req, res) => authController.login(req, res));
 app.use(authMiddleware);
 app.post("/movie", (req, res) => movieController.create(req, res));
 app.put("/movie/:id", (req, res) => movieController.update(req, res));
+app.get("/movie/:id", (req, res) => movieController.find(req, res));
 app.use(handlerError.process);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

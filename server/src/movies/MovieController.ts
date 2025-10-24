@@ -22,4 +22,9 @@ export class MovieController {
     const result = await this.movieUseCse.update(body, id);
     return response.status(200).json(result);
   }
+  public async find(request: AuthenticatedRequest, response: Response) {
+    const { id } = request.params;
+    const result = await this.movieUseCse.find(id);
+    return response.status(200).json(result);
+  }
 }
