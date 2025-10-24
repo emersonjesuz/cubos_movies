@@ -37,6 +37,40 @@ export class MoviePrismaRepository implements MovieRepository {
     return MovieDbMapper.toMovieEntity(movieCreated);
   }
 
+  public async update(movie: MovieEntity, movieId: string): Promise<MovieEntity> {
+    const movieCreated = await this.prisma.movies.update({
+      data: {
+        approvalRating: movie.getApprovalRating(),
+        budget: movie.getBudget(),
+        description: movie.getDescription(),
+        duration: movie.getDuration(),
+        language: movie.getLanguage(),
+        originalTitle: movie.getOriginalTitle(),
+        popularity: movie.getPopularity(),
+        profit: movie.getProfit(),
+        release: movie.getRelease(),
+        revenue: movie.getRevenue(),
+        status: movie.getStatus(),
+        synopsis: movie.getSynopsis(),
+        title: movie.getTitle(),
+        urlBackground: movie.getUrlBackground(),
+        urlCover: movie.getUrlCover(),
+        urlTrailer: movie.getUrlTrailer(),
+        votes: movie.getVotes(),
+        genres: movie.getGenres(),
+        ageRating: movie.getAgeRating(),
+        director: movie.getDirector(),
+      },
+      where: {
+        id: movieId,
+      },
+      include: {
+        users: true,
+      },
+    });
+    return MovieDbMapper.toMovieEntity(movieCreated);
+  }
+
   async findById(id: string): Promise<MovieEntity | null> {
     const movie = await this.prisma.movies.findUnique({
       where: {
