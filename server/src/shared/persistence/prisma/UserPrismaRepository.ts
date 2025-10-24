@@ -19,4 +19,10 @@ export class UserPrismaRepository implements UserRepository {
     if (!user) return null;
     return UserMapper.toUserEntity(user);
   }
+
+  async findById(id: string): Promise<UserEntity | null> {
+    const user = await this.prisma.users.findUnique({ where: { id } });
+    if (!user) return null;
+    return UserMapper.toUserEntity(user);
+  }
 }
