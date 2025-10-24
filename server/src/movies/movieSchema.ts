@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const movieCreateSchema = z.object({
+export const movieSchema = z.object({
   title: z
     .string({ error: "MESSAGE: The field 'title' is obligatory. CODE: TITLE_IS_OBLIGATORY" })
     .min(1, { message: "MESSAGE: The field 'title' cannot be empty. CODE: TITLE_IS_EMPTY" }),
