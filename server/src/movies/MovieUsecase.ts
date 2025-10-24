@@ -33,6 +33,12 @@ export class MovieUseCase {
     return MovieEntityMapper.toMovieOutput(hasMovie);
   }
 
+  public async delete(id: string) {
+    const hasMovie = await this.movieRepository.findById(id);
+    if (!hasMovie) throw new MovieNotFoundException();
+    await this.movieRepository.delete(id);
+  }
+
   private async sendToQueueIfReleasesFuture(movie: MovieEntity) {
     const delay = new Date(movie.getRelease()).getTime() - Date.now();
     if (delay > 0) {

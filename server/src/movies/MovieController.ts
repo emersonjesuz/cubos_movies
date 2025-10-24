@@ -27,4 +27,10 @@ export class MovieController {
     const result = await this.movieUseCse.find(id);
     return response.status(200).json(result);
   }
+
+  public async delete(request: AuthenticatedRequest, response: Response) {
+    const { id } = request.params;
+    await this.movieUseCse.delete(id);
+    return response.status(200).json({ message: "Movie deleted success.", code: "SUCCESS" });
+  }
 }
