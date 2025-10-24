@@ -1,19 +1,31 @@
 import { QueueService } from "../shared/services/queue/QueueService";
-import { MovieCreateInput } from "./dtos/MovieCreateInput";
+import { MovieInput } from "./dtos/MovieCreateInput";
 import { MovieOutput } from "./dtos/MovieOutput";
-import { MovieCreateInputMapper } from "./mappers/MovieCreateInputMapper";
+import { MovieInputMapper } from "./mappers/MovieInputMapper";
 import { MovieEntityMapper } from "./mappers/MovieEntityMapper";
 import { MovieEntity } from "./MovieEntity";
 import { MovieRepository } from "./MovieRepository";
+import { MovieNotFoundException } from "./exceptions/MovieNotFoundException";
 
 export class MovieUseCase {
   constructor(private readonly movieRepository: MovieRepository, private readonly queueService: QueueService) {}
 
-  public async create(input: MovieCreateInput, userId: string): Promise<MovieOutput> {
-    const movie = MovieCreateInputMapper.toMovieEntity(input);
+  public async create(input: MovieInput, userId: string): Promise<MovieOutput> {
+    const movie = MovieInputMapper.toMovieEntity(input);
     const movieCreated = await this.movieRepository.create(movie, userId);
     await this.sendToQueueIfReleasesFuture(movieCreated);
     return MovieEntityMapper.toMovieOutput(movieCreated);
+  }
+
+  public async update(input: MovieInput, movieId: string) {
+    const hasMovie = await this.movieRepository.findById(movieId);
+    if (!hasMovie) throw new MovieNotFoundException();
+    const movie = MovieInputMapper.toMovieEntity(input);
+    const movieUpdated = await this.movieRepository.update(movie, movieId);
+    if (hasMovie.getRelease() < movie.getRelease()) {
+      await this.sendToQueueIfReleasesFuture(movieUpdated);
+    }
+    return MovieEntityMapper.toMovieOutput(movieUpdated);
   }
 
   private async sendToQueueIfReleasesFuture(movie: MovieEntity) {
