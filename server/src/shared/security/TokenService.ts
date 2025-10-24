@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { UnauthorizedException } from "../https/exceptions/UnauthorizedException";
 
 type Payload = {
-  email: string;
+  id: string;
 };
 export interface TokenService {
   generated(payload: Payload): string;
