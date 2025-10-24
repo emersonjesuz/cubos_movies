@@ -21,7 +21,9 @@ export class MovieCreateInputMapper {
       input.urlBackground,
       input.urlTrailer,
       input.approvalRating,
-      input.genres
+      input.genres,
+      input.ageRating,
+      input.director
     );
   }
 }

@@ -27,11 +27,26 @@ export class MoviePrismaRepository implements MovieRepository {
         votes: movie.getVotes(),
         genres: movie.getGenres(),
         userId: userId,
+        ageRating: movie.getAgeRating(),
+        director: movie.getDirector(),
       },
       include: {
         users: true,
       },
     });
     return MovieDbMapper.toMovieEntity(movieCreated);
+  }
+
+  async findById(id: string): Promise<MovieEntity | null> {
+    const movie = await this.prisma.movies.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        users: true,
+      },
+    });
+    if (!movie) return null;
+    return MovieDbMapper.toMovieEntity(movie);
   }
 }

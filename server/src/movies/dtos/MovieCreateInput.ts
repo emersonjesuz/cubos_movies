@@ -17,4 +17,6 @@ export interface MovieCreateInput {
   urlTrailer: string;
   approvalRating: string;
   genres: string[];
+  ageRating: string;
+  director: string;
 }

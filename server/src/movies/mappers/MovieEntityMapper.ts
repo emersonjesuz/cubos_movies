@@ -4,6 +4,7 @@ import { MovieEntity } from "../MovieEntity";
 
 export class MovieEntityMapper {
   public static toMovieOutput(input: MovieEntity): MovieOutput {
+    const user = input.getUser()!;
     return new MovieOutput(
       input.getId(),
       input.getTitle(),
@@ -25,7 +26,9 @@ export class MovieEntityMapper {
       input.getApprovalRating(),
       input.getCreatedAt(),
       input.getGenres(),
-      new MovieUserOutput(input.getUser().getId(), input.getUser().getName())
+      input.getAgeRating(),
+      input.getDirector(),
+      new MovieUserOutput(user.getId(), user.getName())
     );
   }
 }

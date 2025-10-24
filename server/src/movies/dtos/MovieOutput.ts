@@ -22,6 +22,8 @@ export class MovieOutput {
     readonly approvalRating: string,
     readonly createdAt: Date,
     readonly genres: string[],
+    readonly ageRating: string,
+    readonly director: string,
     readonly user: MovieUserOutput
   ) {}
 }

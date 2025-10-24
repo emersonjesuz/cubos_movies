@@ -1,8 +1,6 @@
-import { Movies, Prisma } from "@prisma/client";
-import { MovieCreateInput } from "../dtos/MovieCreateInput";
-import { MovieEntity } from "../MovieEntity";
-import { UserEntity } from "../../users/UserEntity";
 import { MovieWithUser } from "../../shared/interfaces/MovieWithUser";
+import { UserEntity } from "../../users/UserEntity";
+import { MovieEntity } from "../MovieEntity";
 
 export class MovieDbMapper {
   public static toMovieEntity(input: MovieWithUser): MovieEntity {
@@ -26,7 +24,10 @@ export class MovieDbMapper {
       input.urlTrailer,
       input.approvalRating,
       input.genres,
-      new UserEntity(user.name, user.email, "", user.id)
+      input.ageRating,
+      input.director,
+      new UserEntity(user.name, user.email, "", user.id),
+      input.id
     );
   }
 }
