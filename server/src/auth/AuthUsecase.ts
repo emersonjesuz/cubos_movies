@@ -25,7 +25,7 @@ export class AuthUseCase {
     const user = await this.userRepository.findByEmail(input.email);
     if (!user) throw new EmailOrPasswordIncorrectException();
     const passwordIsMatches = await this.passwordEncoder.matches(input.password, user.getPassword());
-    if (passwordIsMatches) throw new EmailOrPasswordIncorrectException();
-    return this.tokenService.generated({ email: user.getEmail() });
+    if (!passwordIsMatches) throw new EmailOrPasswordIncorrectException();
+    return this.tokenService.generated({ id: user.getId() });
   }
 }
