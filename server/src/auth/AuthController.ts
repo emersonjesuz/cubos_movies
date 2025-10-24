@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { AuthUseCase } from "./AuthUsecase";
-import { UserPrismaRepository } from "../users/UserRepository";
 import { BcryptPasswordEncoder } from "../shared/security/PasswordEncoder";
 import { loginSchema, registerUserSchema } from "./authSchema";
 import { JwtTokenService } from "../shared/security/TokenService";
+import { UserPrismaRepository } from "../shared/persistence/prisma/UserPrismaRepository";
 
 export class AuthController {
   private authUseCase: AuthUseCase;
