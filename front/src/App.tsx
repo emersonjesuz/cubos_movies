@@ -2,9 +2,7 @@ import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import Footer from "./components/footer";
 import Header from "./components/header";
-import Login from "./pages/login";
 import { useThemeStore } from "./zustand/themeStore";
-
 export default function App() {
   const { theme } = useThemeStore();
   return (
@@ -22,7 +20,8 @@ export default function App() {
 
         <div className="relative z-10 grid grid-cols-1 grid-rows-[auto_1fr_auto] h-full">
           <Header />
-          <Login />
+          {/* <Login /> */}
+          {/* <Register /> */}
           <Footer />
         </div>
       </div>

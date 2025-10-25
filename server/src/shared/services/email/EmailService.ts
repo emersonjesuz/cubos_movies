@@ -20,6 +20,7 @@ export class EmailResendService implements EmailService {
       to: input.email,
       subject: input.subject,
       html: input.html,
+      scheduledAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
     });
 
     if (error) {
