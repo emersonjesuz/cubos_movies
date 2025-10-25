@@ -2,3 +2,5 @@ node_modules
 .env
 TODO.txt
 /src/generated/prisma
+gcpSecret.json
+index.html
