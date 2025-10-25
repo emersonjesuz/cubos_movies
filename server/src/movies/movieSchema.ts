@@ -37,8 +37,15 @@ export const movieSchema = z.object({
     .nonnegative({ message: "MESSAGE: The field 'votes' cannot be negative. CODE: VOTES_IS_NEGATIVE" }),
 
   duration: z
-    .string({ error: "MESSAGE: The field 'duration' is obligatory. CODE: DURATION_IS_OBLIGATORY" })
-    .min(1, { message: "MESSAGE: The field 'duration' cannot be empty. CODE: DURATION_IS_EMPTY" }),
+    .string({
+      error: "MESSAGE: The field 'duration' is obligatory. CODE: DURATION_IS_OBLIGATORY",
+    })
+    .min(1, {
+      message: "MESSAGE: The field 'duration' cannot be empty. CODE: DURATION_IS_EMPTY",
+    })
+    .regex(/^\d+$/, {
+      message: "MESSAGE: The field 'duration' must be a number in minutes. CODE: DURATION_MUST_BE_NUMBER",
+    }),
 
   language: z
     .string({ error: "MESSAGE: The field 'language' is obligatory. CODE: LANGUAGE_IS_OBLIGATORY" })
@@ -74,11 +81,80 @@ export const movieSchema = z.object({
       error: "MESSAGE: The field 'genres' is obligatory. CODE: GENRES_IS_OBLIGATORY",
     }
   ),
-  ageRating: z
-    .string({ error: "MESSAGE: The field 'ageRating' is obligatory. CODE: AGE_RATING_IS_OBLIGATORY" })
-    .min(1, { message: "MESSAGE: The field 'ageRating' cannot be empty. CODE: AGE_RATING_IS_EMPTY" }),
-
+  ageRating: z.enum(["L", "12", "14", "18"], {
+    message: "MESSAGE: The field 'ageRating' must be one of the following: L, 12, 14, 18. CODE: AGE_RATING_INVALID",
+  }),
   director: z
     .string({ error: "MESSAGE: The field 'director' is obligatory. CODE: DIRECTOR_IS_OBLIGATORY" })
     .min(1, { message: "MESSAGE: The field 'director' cannot be empty. CODE: DIRECTOR_IS_EMPTY" }),
 });
+
+export const movieFilterSchema = z
+  .object({
+    search: z
+      .string({
+        error: "MESSAGE: The field 'search' is obligatory. CODE: SEARCH_IS_OBLIGATORY",
+      })
+      .optional()
+      .default(""),
+    duration: z
+      .string({
+        error: "MESSAGE: The field 'duration' is obligatory. CODE: DURATION_IS_OBLIGATORY",
+      })
+      .min(1, {
+        message: "MESSAGE: The field 'duration' cannot be empty. CODE: DURATION_IS_EMPTY",
+      })
+      .regex(/^\d+$/, {
+        message: "MESSAGE: The field 'duration' must be a number in minutes. CODE: DURATION_MUST_BE_NUMBER",
+      })
+      .optional()
+      .default("0"),
+    ageRating: z
+      .enum(["L", "12", "14", "18"], {
+        message: "MESSAGE: The field 'ageRating' must be one of the following: L, 12, 14, 18. CODE: AGE_RATING_INVALID",
+      })
+      .optional()
+      .default("L"),
+    startRelease: z.coerce
+      .date({ error: "MESSAGE: The field 'startRelease' must be a valid date. CODE: START_RELEASE_IS_INVALID" })
+      .optional()
+      .default(new Date()),
+    endRelease: z.coerce
+      .date({ error: "MESSAGE: The field 'endRelease' must be a valid date. CODE: END_RELEASE_IS_INVALID" })
+      .optional()
+      .default(new Date()),
+    type: z
+      .enum(["SEARCH", "ALL", "RELEASE", "DURATION", "AGE_RATING"], {
+        message:
+          "MESSAGE: The field 'type' must be either 'SEARCH', 'RELEASE',  'DURATION', 'AGE_RATING' or 'ALL'. CODE: TYPE_IS_INVALID",
+      })
+      .default("ALL"),
+    page: z
+      .number({
+        error: "MESSAGE: The field 'page' must be a number. CODE: PAGE_MUST_BE_NUMBER",
+      })
+      .int({
+        message: "MESSAGE: The field 'page' must be an integer. CODE: PAGE_MUST_BE_INTEGER",
+      })
+      .min(1, {
+        message: "MESSAGE: The field 'page' must be greater than 0. CODE: PAGE_MIN_1",
+      })
+      .default(1),
+  })
+  .refine(
+    (data) => {
+      if (data.type === "RELEASE") {
+        const sameDay =
+          data.startRelease.getDate() === data.endRelease.getDate() &&
+          data.startRelease.getMonth() === data.endRelease.getMonth() &&
+          data.startRelease.getFullYear() === data.endRelease.getFullYear();
+        if (sameDay) return false;
+        if (data.startRelease > data.endRelease) return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "MESSAGE: The 'startRelease' and 'endRelease' fields are mandatory when the type is 'RELEASE'. CODE: INVALID_RELEASE_DATE_FILTER",
+    }
+  );
