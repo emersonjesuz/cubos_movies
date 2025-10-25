@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../shared/interfaces/AuthenticatedRequest";
 import { MoviePrismaRepository } from "../shared/persistence/prisma/MoviePrismaRepository";
-import { movieSchema } from "./movieSchema";
+import { movieFilterSchema, movieSchema } from "./movieSchema";
 import { MovieUseCase } from "./MovieUsecase";
 import { QueueRabbitMQService } from "../shared/services/queue/QueueService";
 export class MovieController {
@@ -27,6 +27,12 @@ export class MovieController {
     const user = request.user!;
     const { id } = request.params;
     const result = await this.movieUseCse.find(id, user.getId());
+    return response.status(200).json(result);
+  }
+
+  public async findAll(request: AuthenticatedRequest, response: Response) {
+    const query = movieFilterSchema.parse(request.query);
+    const result = await this.movieUseCse.findAllBy(query);
     return response.status(200).json(result);
   }
 

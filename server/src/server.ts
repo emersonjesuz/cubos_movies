@@ -4,17 +4,21 @@ import { AuthController } from "./auth/AuthController";
 import { MovieController } from "./movies/MovieController";
 import { authMiddleware } from "./shared/middleware/AuthMiddleware";
 import { ErrorHandler } from "./shared/middleware/ErrorHandler";
+import { UploadController } from "./upload/UploadController";
 
 const app = express();
 const authController = new AuthController();
 const handlerError = new ErrorHandler();
 const movieController = new MovieController();
+const uploadController = new UploadController();
 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.json({ limit: "10mb" }));
+app.post("/upload", (req, res) => uploadController.save(req, res));
 app.post("/auth/register", (req, res) => authController.register(req, res));
 app.post("/auth/login", (req, res) => authController.login(req, res));
+app.get("/movie", (req, res) => movieController.findAll(req, res));
 app.use(authMiddleware);
 app.post("/movie", (req, res) => movieController.create(req, res));
 app.put("/movie/:id", (req, res) => movieController.update(req, res));
