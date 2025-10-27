@@ -6,9 +6,13 @@ import { handlerErrorApi } from "../../utils/handlerErrorApi";
 import { FormButton } from "../formButton";
 import { FormInput } from "../formInput";
 import { registerUserSchema, type RegisterUserInput } from "../../schemas/register";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterComponents() {
+  const [messageErro, setMessageError] = useState("");
+  const token = localStorage.getItem("token");
+  const router = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,19 +20,21 @@ export default function RegisterComponents() {
   } = useForm<RegisterUserInput>({
     resolver: zodResolver(registerUserSchema),
   });
-
-  const [messageErro, setMessageError] = useState("");
-
   async function onSubmit(values: RegisterUserInput) {
     try {
-      const { data } = await api.post("/auth/register", values);
-      console.log(data);
-      //  fazer a navegação
+      await api.post("/auth/register", values);
+      router("/login");
     } catch (error) {
       const message = handlerErrorApi(error);
       setMessageError(message);
     }
   }
+
+  useEffect(() => {
+    if (token) {
+      router("/");
+    }
+  }, []);
 
   return (
     <div className="flex items-center justify-center h-full p-4">

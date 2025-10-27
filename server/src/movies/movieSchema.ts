@@ -18,8 +18,24 @@ export const movieSchema = z.object({
     .min(1, { message: "MESSAGE: The field 'description' cannot be empty. CODE: DESCRIPTION_IS_EMPTY" }),
 
   popularity: z
-    .string({ error: "MESSAGE: The field 'popularity' is obligatory. CODE: POPULARITY_IS_OBLIGATORY" })
-    .min(1, { message: "MESSAGE: The field 'popularity' cannot be empty. CODE: POPULARITY_IS_EMPTY" }),
+    .string({
+      error: "MESSAGE: The field 'popularity' is obligatory. CODE: POPULARITY_IS_OBLIGATORY",
+    })
+    .min(1, {
+      message: "MESSAGE: The field 'popularity' cannot be empty. CODE: POPULARITY_IS_EMPTY",
+    })
+    .regex(/^\d+$/, {
+      message: "MESSAGE: The field 'popularity' must contain only numbers. CODE: POPULARITY_MUST_BE_NUMERIC",
+    })
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return num >= 1 && num <= 100;
+      },
+      {
+        message: "MESSAGE: The field 'popularity' must be between 1 and 100. CODE: POPULARITY_RANGE_1_100",
+      }
+    ),
 
   release: z.coerce.date({ error: "MESSAGE: The field 'release' must be a valid date. CODE: RELEASE_IS_INVALID" }),
 
@@ -81,7 +97,7 @@ export const movieSchema = z.object({
       error: "MESSAGE: The field 'genres' is obligatory. CODE: GENRES_IS_OBLIGATORY",
     }
   ),
-  ageRating: z.enum(["L", "12", "14", "18"], {
+  ageRating: z.string({
     message: "MESSAGE: The field 'ageRating' must be one of the following: L, 12, 14, 18. CODE: AGE_RATING_INVALID",
   }),
   director: z
@@ -101,16 +117,13 @@ export const movieFilterSchema = z
       .string({
         error: "MESSAGE: The field 'duration' is obligatory. CODE: DURATION_IS_OBLIGATORY",
       })
-      .min(1, {
-        message: "MESSAGE: The field 'duration' cannot be empty. CODE: DURATION_IS_EMPTY",
-      })
       .regex(/^\d+$/, {
         message: "MESSAGE: The field 'duration' must be a number in minutes. CODE: DURATION_MUST_BE_NUMBER",
       })
       .optional()
       .default("0"),
     ageRating: z
-      .enum(["L", "12", "14", "18"], {
+      .string({
         message: "MESSAGE: The field 'ageRating' must be one of the following: L, 12, 14, 18. CODE: AGE_RATING_INVALID",
       })
       .optional()
@@ -129,12 +142,9 @@ export const movieFilterSchema = z
           "MESSAGE: The field 'type' must be either 'SEARCH', 'RELEASE',  'DURATION', 'AGE_RATING' or 'ALL'. CODE: TYPE_IS_INVALID",
       })
       .default("ALL"),
-    page: z
+    page: z.coerce
       .number({
         error: "MESSAGE: The field 'page' must be a number. CODE: PAGE_MUST_BE_NUMBER",
-      })
-      .int({
-        message: "MESSAGE: The field 'page' must be an integer. CODE: PAGE_MUST_BE_INTEGER",
       })
       .min(1, {
         message: "MESSAGE: The field 'page' must be greater than 0. CODE: PAGE_MIN_1",

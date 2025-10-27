@@ -17,7 +17,7 @@ export function FormInput({ label, name, placeholder, type = "text", error, regi
   return (
     <Form.Field className="grid gap-2" name={name}>
       <div className="flex items-baseline justify-between h-fit">
-        <Form.Label className="text-[12.8px] font-medium text-white min-w-fit mr-1.5">{label}</Form.Label>
+        <Form.Label className="text-[12.8px] font-medium text-white min-w-fit mr-1.5 w-full">{label}</Form.Label>
         {error ? (
           <span className="text-[10px] text-red-400 w-[200px] text-end  whitespace-nowrap truncate ">
             {shrinkErrorMessage(error.message)}
@@ -33,8 +33,7 @@ export function FormInput({ label, name, placeholder, type = "text", error, regi
           {...register}
           type={type}
           placeholder={placeholder || label}
-          required
-          className="w-full h-11 rounded px-3 bg-blackA2 text-white placeholder:text-[16px] placeholder:text-[#6F6D78] border border-[#3C393F] bg-[#1A191B] outline-none"
+          className="w-full h-11 rounded focus:border-[#8E4EC6] px-3 bg-blackA2 text-white placeholder:text-[16px] placeholder:text-[#6F6D78] border border-[#3C393F] bg-[#1A191B] outline-none"
         />
       </Form.Control>
     </Form.Field>

@@ -1,21 +1,21 @@
-import { QueueService } from "../shared/services/queue/QueueService";
-import { MovieInput } from "./dtos/MovieCreateInput";
+import { EmailUseCase } from "../email/EmailUseCase";
+import { MovieInput } from "./dtos/MovieInput";
+import { MovieFilter } from "./dtos/MovieFIlter";
 import { MovieOutput } from "./dtos/MovieOutput";
-import { MovieInputMapper } from "./mappers/MovieInputMapper";
+import { MovieNotFoundException } from "./exceptions/MovieNotFoundException";
 import { MovieEntityMapper } from "./mappers/MovieEntityMapper";
+import { MovieInputMapper } from "./mappers/MovieInputMapper";
 import { MovieEntity } from "./MovieEntity";
 import { MovieRepository } from "./MovieRepository";
-import { MovieNotFoundException } from "./exceptions/MovieNotFoundException";
-import { MovieFilter } from "./dtos/MovieFIlter";
 
 export class MovieUseCase {
   private movies: MovieOutput[] = [];
-  constructor(private readonly movieRepository: MovieRepository, private readonly queueService: QueueService) {}
+  constructor(private readonly movieRepository: MovieRepository, private readonly emailUseCase: EmailUseCase) {}
 
   public async create(input: MovieInput, userId: string): Promise<MovieOutput> {
     const movie = MovieInputMapper.toMovieEntity(input);
     const movieCreated = await this.movieRepository.create(movie, userId);
-    await this.sendToQueueIfReleasesFuture(movieCreated);
+    await this.sendToEmailIfReleasesFuture(movieCreated);
     return MovieEntityMapper.toMovieOutput(movieCreated);
   }
 
@@ -25,18 +25,14 @@ export class MovieUseCase {
     const movie = MovieInputMapper.toMovieEntity(input);
     const movieUpdated = await this.movieRepository.update(movie, id);
     if (hasMovie.getRelease() < movie.getRelease()) {
-      await this.sendToQueueIfReleasesFuture(movieUpdated);
+      await this.sendToEmailIfReleasesFuture(movieUpdated);
     }
     return MovieEntityMapper.toMovieOutput(movieUpdated);
   }
-  private async sendToQueueIfReleasesFuture(movie: MovieEntity) {
+  private async sendToEmailIfReleasesFuture(movie: MovieEntity) {
     const delay = new Date(movie.getRelease()).getTime() - Date.now();
     if (delay > 0) {
-      await this.queueService.producer({
-        queueName: "MOVIE",
-        executedAt: delay,
-        payload: { id: movie.getId(), executedAt: new Date(movie.getRelease()).getTime() },
-      });
+      await this.emailUseCase.sendReleaseMovie(movie.getId());
     }
   }
   public async find(id: string, userId: string) {
@@ -49,6 +45,11 @@ export class MovieUseCase {
     const hasMovie = await this.movieRepository.findByIdAndUser(id, userId);
     if (!hasMovie) throw new MovieNotFoundException();
     await this.movieRepository.delete(id);
+  }
+
+  public async checkAccess(id: string, userId: string) {
+    const hasMovie = await this.movieRepository.findByIdAndUser(id, userId);
+    if (!hasMovie) throw new MovieNotFoundException();
   }
   public async findAllBy(filter: MovieFilter) {
     await this.findAll(filter);

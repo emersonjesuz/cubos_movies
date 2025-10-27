@@ -1,4 +1,4 @@
-import { MovieInput } from "../dtos/MovieCreateInput";
+import { MovieInput } from "../dtos/MovieInput";
 import { MovieEntity } from "../MovieEntity";
 
 export class MovieInputMapper {

@@ -4,3 +4,4 @@ TODO.txt
 /src/generated/prisma
 gcpSecret.json
 index.html
+dist

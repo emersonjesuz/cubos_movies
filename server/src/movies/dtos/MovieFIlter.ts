@@ -4,7 +4,7 @@ export interface MovieFilter {
   type: TypeFIlter;
   startRelease: Date;
   endRelease: Date;
-  ageRating: "L" | "12" | "14" | "18";
+  ageRating: string;
   duration: string;
   page: number;
 }
